@@ -1,0 +1,32 @@
+{
+    "format_version": 2,
+    "header": {
+        "name": "Magic",
+        "description": "Cast spells. Made by Renegades. SC",
+        "uuid": "e5136364-3fc1-45ad-83ad-8c347a96ae17",
+        "version": [0,1,0],
+        "min_engine_version": [1,20,0]
+    },
+    "modules": [
+        {
+            "type": "script",
+            "language": "javascript",
+            "entry": "scripts/index.js",
+            "uuid": "0ddbac41-b353-48ab-97de-2008725ee514",
+            "version": [1,0,0]
+        }
+    ],
+    "capabilities": [
+        "script_eval"
+    ],
+    "dependencies": [
+        {
+			"module_name": "@minecraft/server-ui",
+			"version": "1.1.0-beta"
+		},
+        {
+            "module_name": "@minecraft/server",
+            "version": "1.3.0-beta"
+        }
+    ]
+}
