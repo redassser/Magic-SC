@@ -25,6 +25,7 @@ const spellDict = {
             if (changeMana(player, this.manaCost, true)) return
             const loc1 = player.getHeadLocation(), loc2 = block.block.location;
             loc1.y -= 0.5;
+            loc2.x += block.faceLocation.x; loc2.y += block.faceLocation.y; loc2.z += block.faceLocation.z
             const intervalx = (loc2.x - loc1.x) / 20, intervaly = (loc2.y - loc1.y) / 20, intervalz = (loc2.z - loc1.z) / 20;
             //Laser particles
             const vars = new MolangVariableMap();
@@ -56,6 +57,16 @@ const spellDict = {
             //Kill
             entity[0].entity.applyDamage(5, { cause: "magic", damagingEntity: player })
             entity[0].entity.setOnFire(5, true);
+        }
+    },
+    "§r§2Jump Glide": {
+        manaCost: 75,
+        cast: function (player) {
+            if (changeMana(player, this.manaCost, true)) return
+            player.applyKnockback(0, 0, 0, 2);
+            system.runTimeout(() => {
+                //player.glide(); Not real 
+            }, 60)
         }
     }
 }
