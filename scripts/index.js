@@ -59,17 +59,19 @@ const spellDict = {
             entity[0].entity.setOnFire(5, true);
         }
     },
-    "§r§2Jump Glide": {
-        manaCost: 75,
+    "§r§2Jump": {
+        manaCost: 65,
         cast: function (player) {
             if (changeMana(player, this.manaCost, true)) return
-            player.applyKnockback(0, 0, 0, 2);
+            const playerDir = player.getViewDirection();
+            player.applyKnockback(playerDir.x, playerDir.z, ((1 - Math.abs(playerDir.y)) * 8), playerDir.y * 2);
             system.runTimeout(() => {
-                //player.glide(); Not real 
-            }, 60)
+                player.addEffect('resistance', 60, {amplifier: 3, showParticles: false});
+            }, 20)
         }
     }
 }
+
 const spellNameArray = Object.keys(spellDict);
 
 world.afterEvents.itemUse.subscribe((event) => {
