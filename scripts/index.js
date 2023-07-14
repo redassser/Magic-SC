@@ -17,6 +17,18 @@ system.runInterval(() => {
 
 //  spells
 const spellDict = {
+    "§r§l§mExplosive Arrow": {
+        manaCost: 0,
+        cast: function (player) {
+            const playerHeadLoc = player.getHeadLocation(), playerHeadDir = player.getViewDirection();
+            playerHeadDir.x *= 2; playerHeadDir.y *= 2; playerHeadDir.z *= 2;
+            playerHeadLoc.x += playerHeadDir.x; playerHeadLoc.z += playerHeadDir.z;
+            const arrow = player.dimension.spawnEntity("minecraft:arrow", playerHeadLoc);
+            arrow.addTag("exploArrow")
+            arrow.setRotation(player.getRotation());
+            arrow.applyImpulse(playerHeadDir);
+        }
+    },
     "§r§1Block Laser": {
         manaCost: 15,
         cast: function(player) {
@@ -79,7 +91,7 @@ world.afterEvents.itemUse.subscribe((event) => {
 
     //  Check wand
     const heldItem = player.getComponent("minecraft:inventory").container.getSlot(player.selectedSlot);
-    if (!heldItem || heldItem.typeId != "magic:wood_wand") return
+    if (!heldItem || !heldItem.hasTag("magic:wand")) return
     const wandSpells = heldItem.getLore()
 
     if (wandSpells.length === 0) return;
@@ -97,8 +109,9 @@ world.afterEvents.itemStartUseOn.subscribe((event) => {
 
     const player = event.source;
     const heldItem = player.getComponent("minecraft:inventory").container.getSlot(player.selectedSlot);
-    if (!heldItem || heldItem.typeId != "magic:wood_wand") return
+    if (!heldItem || !heldItem.hasTag("magic:wand")) return
 
+    //  Magic ball form
     const form = new ActionFormData();
     form.title("Choose");
     for (const spell in spellDict) {
@@ -113,9 +126,16 @@ world.afterEvents.itemStartUseOn.subscribe((event) => {
 });
 world.beforeEvents.itemUseOn.subscribe((event) => {
     if (!event.itemStack || !event.block) return;
-    if (!event.block || event.itemStack.typeId != "magic:wood_wand" || event.block.typeId != "magic:crystal_ball") return;
+    if (!event.block || !event.itemStack.hasTag("magic:wand") || event.block.typeId != "magic:crystal_ball") return;
     event.cancel = true;
 });
+world.afterEvents.projectileHit.subscribe((event) => {
+    if (event.getBlockHit()) {
+        event.dimension.createExplosion(event.location, 3, {breaksBlocks: false, source: event.source });
+    } else {
+        event.dimension.createExplosion(event.getEntityHit().entity.location, 3, {breaksBlocks: false, source: event.source });
+    }
+})
 
 function changeMana(player, amount, useMana) {
     if (amount === 0) return false;
