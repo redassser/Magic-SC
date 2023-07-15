@@ -109,6 +109,7 @@ world.afterEvents.itemStartUseOn.subscribe((event) => {
 
     const player = event.source;
     const heldItem = player.getComponent("minecraft:inventory").container.getSlot(player.selectedSlot);
+
     if (!heldItem || !heldItem.hasTag("magic:wand")) return
 
     //  Magic ball form
@@ -130,6 +131,7 @@ world.beforeEvents.itemUseOn.subscribe((event) => {
     event.cancel = true;
 });
 world.afterEvents.projectileHit.subscribe((event) => {
+    if (!event.dimension.getBlock(event.location)) return;
     if (event.getBlockHit()) {
         event.dimension.createExplosion(event.location, 3, {breaksBlocks: false, source: event.source });
     } else {
